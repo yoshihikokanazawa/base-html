@@ -1,0 +1,377 @@
+@charset "utf-8";
+header {
+position: fixed;
+width: 100%;
+top: 0;
+left: 0;/* z-index 順序管理 setting.cssで設定 */
+}
+
+/*////////////////////////////////////////////////////////////////////
+スマホ版
+////////////////////////////////////////////////////////////////////*/
+@media screen and (max-width: 1240px) {
+#container {
+padding-top: 54px;
+}
+header .pc {
+display: none !important;
+}
+/*////////////////////////////////////////////////////////////////////
+z-index / pointer-events
+////////////////////////////////////////////////////////////////////*/
+header {
+pointer-events: none; /* 固定 */
+}
+header::after {
+z-index: 21; /* 固定 */
+}
+header .hd-logo {
+pointer-events: auto; /* 固定 */
+z-index: 22; /* 固定 */
+}
+header #gnav {
+}
+header #gnav .gnav-hamburger {
+pointer-events: auto; /* 固定 */
+z-index: 23; /* 固定 */
+}
+u header #gnav .gnav-inner {
+pointer-events: auto; /* 固定 */
+z-index: 20; /* 固定 */
+}
+/*////////////////////////////////////////////////////////////////////
+header
+////////////////////////////////////////////////////////////////////*/
+header {
+min-height: 54px;
+transition: 0.6s cubic-bezier(0.000, 0.720, 0.290, 1);
+}
+header * {
+pointer-events: auto; /* 固定 */
+}
+header::after {
+content: "";
+display: block;
+position: absolute;
+top: 0;
+left: 0;
+width: 100%;
+height: 54px;
+background: #fff;
+}
+header::after { /* 背景色設定 */
+}
+/*--------------------------------------------------------------------
+gnavOpen
+--------------------------------------------------------------------*/
+.gnavOpen header {
+min-height: 100%;
+}
+/*////////////////////////////////////////////////////////////////////
+hd-logo
+////////////////////////////////////////////////////////////////////*/
+header .hd-logo {
+position: relative;
+width: 100%;
+height: 54px;
+padding-right: 106px;
+}
+header .hd-logo a {
+display: flex;
+align-items: center;
+width: 100%;
+height: 100%;
+padding: 0 20px;
+font-size: 1.4rem;
+font-weight: 600;
+}
+header .hd-logo a img {
+width: 238px;
+margin: 0;
+}
+/*////////////////////////////////////////////////////////////////////
+gnav
+////////////////////////////////////////////////////////////////////*/
+header #gnav {
+position: absolute;
+top: 0;
+left: 0;
+width: 100%;
+height: 100%;
+min-height: 100%;
+padding-top: 54px;
+pointer-events: none; /* 固定 */
+}
+/*====================================================================
+gnav-hamburger
+====================================================================*/
+header #gnav .gnav-hamburger {
+position: absolute;
+top: 0px;
+right: 0px;
+width: 54px;
+height: 54px;
+display: flex;
+cursor: pointer;
+}
+header #gnav .gnav-hamburger span {
+position: absolute;
+left: 0px;
+right: 0px;
+width: 21px;
+height: 2px;
+display: block;
+background: #406380;
+transition: transform 0.2s ease;
+}
+header #gnav .gnav-hamburger span:nth-of-type(1) {
+top: 36%;
+}
+header #gnav .gnav-hamburger span:nth-of-type(2) {
+top: 49%;
+}
+header #gnav .gnav-hamburger span:nth-of-type(3) {
+top: 62%;
+}
+/*--------------------------------------------------------------------
+gnavOpen
+--------------------------------------------------------------------*/
+.gnavOpen header #gnav .gnav-hamburger {
+}
+.gnavOpen header #gnav .gnav-hamburger span:nth-of-type(1) {
+transform: translateY(7px) rotate(45deg);
+top: 35%;
+}
+.gnavOpen header #gnav .gnav-hamburger span:nth-of-type(2) {
+opacity: 0;
+}
+.gnavOpen header #gnav .gnav-hamburger span:nth-of-type(3) {
+transform: translateY(-9px) rotate(-45deg);
+top: 67%;
+}
+/*====================================================================
+gnav-inner
+====================================================================*/
+header #gnav .gnav-inner {
+background: #fff;
+width: 100%;
+height: 100%;
+min-height: 100%;
+transition: 0.6s cubic-bezier(0.000, 0.720, 0.290, 1);
+overflow-y: scroll;
+background: #eee;
+}
+header #gnav .gnav-inner.gnav-down {
+transform: translateY(-100%);
+}
+header #gnav .gnav-inner.gnav-side {
+transform: translateX(100%);
+}
+header #gnav .gnav-inner.gnav-fade {
+}
+/*--------------------------------------------------------------------
+gnavOpen
+--------------------------------------------------------------------*/
+.gnavOpen header #gnav .gnav-inner {
+opacity: 1;
+}
+.gnavOpen header #gnav .gnav-inner.gnav-down {
+transform: translateY(0);
+}
+.gnavOpen header #gnav .gnav-inner.gnav-side {
+transform: translateX(0);
+}
+.gnavOpen header #gnav .gnav-inner.gnav-fade {
+}
+/*====================================================================
+gnav-nav
+====================================================================*/
+header #gnav .gnav-inner .gnav-nav {
+}
+header #gnav .gnav-inner .gnav-nav > li {
+}
+header #gnav .gnav-inner .gnav-nav > li > p {
+}
+header #gnav .gnav-inner .gnav-nav > li > p a {
+font-size: 1.4rem;
+display: block;
+padding: 20px 0;
+position: relative;
+border-bottom: 1px solid #fff;
+}
+/*====================================================================
+.gnav-nav-sub
+====================================================================*/
+header #gnav .gnav-inner .gnav-nav > li > .gnav-nav-sub {
+}
+header #gnav .gnav-inner .gnav-nav > li > .gnav-nav-sub > ul {
+background:#ddd;
+}
+header #gnav .gnav-inner .gnav-nav > li > .gnav-nav-sub > ul > li {
+}
+header #gnav .gnav-inner .gnav-nav > li > .gnav-nav-sub > ul > li a {
+font-size: 1.2rem;
+display: block;
+overflow: hidden;
+line-height: 0;
+transition: all 0.3s ease;
+}
+header #gnav .gnav-inner .gnav-nav > li > .gnav-nav-sub > ul > li a img {
+position: absolute;
+top: 50%;
+left: 26px;
+height: 40px;
+margin-top: -20px;
+}
+header #gnav .gnav-inner .gnav-nav > li > .gnav-nav-sub > ul > li a::after {
+}
+/*--------------------------------------------------------------------
+open
+--------------------------------------------------------------------*/
+header #gnav .gnav-inner .gnav-nav > li.open > p a {
+}
+header #gnav .gnav-inner .gnav-nav > li.open > .gnav-nav-sub > ul > li a {
+padding: 20px 0;
+line-height: 1.5;
+border-bottom: 1px solid #fff;
+}
+}
+
+/*////////////////////////////////////////////////////////////////////
+PC版
+////////////////////////////////////////////////////////////////////*/
+@media screen and (min-width: 1240px) {
+#container {
+padding-top: 75px;
+}
+/*////////////////////////////////////////////////////////////////////
+header
+////////////////////////////////////////////////////////////////////*/
+header {
+height: 75px;
+display: flex;
+justify-content: space-between;
+background: #fff;
+}
+header > * {
+margin: 0;
+}
+header .sp {
+display: none !important;
+}
+header .pc-space {
+content: "";
+display: inline;
+padding-left: 1em;
+}
+/*////////////////////////////////////////////////////////////////////
+hd-logo
+////////////////////////////////////////////////////////////////////*/
+header .hd-logo {
+position: relative;
+height: 100%;
+}
+header .hd-logo a {
+display: flex;
+align-items: center;
+height: 100%;
+position: relative;
+padding: 10px 25px;
+font-size: 1.3rem;
+font-weight: 600;
+}
+/*////////////////////////////////////////////////////////////////////
+gnav
+////////////////////////////////////////////////////////////////////*/
+header #gnav {
+display: flex;
+}
+/*====================================================================
+gnav-hamburger
+====================================================================*/
+header #gnav .gnav-hamburger {
+display: none;
+}
+/*====================================================================
+gnav-inner
+====================================================================*/
+header #gnav .gnav-inner {
+display: flex !important; /* スマホ用js上書 */
+height: auto !important; /* スマホ用js上書 */
+overflow: visible !important; /* スマホ用js上書 */
+flex-flow: row-reverse;
+}
+/*====================================================================
+gnav-nav
+====================================================================*/
+header #gnav .gnav-inner .gnav-nav {
+transition: ease 0.8s;
+display: flex;
+height: 100%;
+}
+header #gnav .gnav-inner .gnav-nav > li {
+height: 100%;
+}
+header #gnav .gnav-inner .gnav-nav > li > p {
+height: 100%;
+position: relative;
+}
+header #gnav .gnav-inner .gnav-nav > li > p a {
+position: relative;
+padding: 0 12px;
+font-size: 1.3rem;
+font-weight: 600;
+transition: ease 0.2s;
+width: 100%;
+height: 100%;
+display: flex;
+align-items: center;
+white-space: nowrap;
+}
+header #gnav .gnav-inner .gnav-nav > li > p a:hover {
+background: #005ead;
+color: #fff;
+}
+header #gnav .gnav-inner .gnav-nav > li > .gnav-nav-sub {
+display: block !important;
+position: absolute;
+top: 75px;
+left: 0;
+width: 100%;
+background: rgba(255,255,255,0.9);
+overflow: hidden;
+pointer-events: none;
+opacity: 0;
+transition: all 0.5s ease;
+border-top: 1px solid #e7e7e7;/* overflow: hidden; */
+}
+header #gnav .gnav-inner .gnav-nav > li > .gnav-nav-sub > ul {
+margin-top: -200px;
+transition: all 0.5s ease;
+display: flex;
+flex-wrap: wrap;
+overflow: hidden;
+}
+header #gnav .gnav-inner .gnav-nav > li > .gnav-nav-sub > ul > li {
+width: 25%;
+}
+header #gnav .gnav-inner .gnav-nav > li > .gnav-nav-sub > ul > li > a {
+display: flex;
+padding: 12px 16px 12px 12px;
+border-bottom: 1px solid #e7e7e7;
+border-right: 1px solid #e7e7e7;
+transition: all 0.2s ease;
+font-size: 1.3rem;
+}
+header #gnav .gnav-inner .gnav-nav > li > .gnav-nav-sub > ul > li > a:hover {
+background: #005ead;
+color: #fff;
+}
+header #gnav .gnav-inner .gnav-nav > li:hover > .gnav-nav-sub {
+opacity: 1;
+pointer-events: auto;
+}
+header #gnav .gnav-inner .gnav-nav > li:hover > .gnav-nav-sub > ul {
+margin-top: 0;
+}
+}

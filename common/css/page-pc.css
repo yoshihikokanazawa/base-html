@@ -1,0 +1,8 @@
+@charset "UTF-8";
+
+@media screen and (min-width: 750px) {
+#mv{
+height:1000px;
+background:#fdffed;
+}
+}

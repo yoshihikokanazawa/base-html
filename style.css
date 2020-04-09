@@ -1,0 +1,41 @@
+@charset "utf-8";
+/*
+Theme Name: 
+Author: Gripro Inc.
+Author URI: https://gripro.co.jp/
+Description: 
+Version: 1.1
+License: Gripro, Ltd.
+Text Domain: 
+*/
+@import url('./common/css/normalize.css');
+@import url('./common/slick/slick.css');
+@import url('./common/slick/slick-theme.css');
+@import url('./common/css/setting.css');
+@import url('./common/css/fonts.css');
+@import url('./common/css/cmn.css');
+@import url('./common/css/header.css');
+@import url('./common/css/share-sp.css'); /* 共通css(class) */
+@import url('./common/css/share-pc.css'); /* 共通css(class) */
+@import url('./common/css/page-sp.css'); /* 各ページ(id) */
+@import url('./common/css/page-pc.css'); /* 各ページ(id) */
+@import url('./common/css/edit-sp.css'); /* 編集用CSS、本番化時削除*/
+@import url('./common/css/edit-pc.css'); /* 編集用CSS、本番化時削除*/
+
+/*
+■共通CSS
+
+※新規追加したら追加してください
+
+ttl-navy　サブタイトル
+ttl-left-line
+ttl-horizontal-line
+ttl-top　トップのタイトル
+img-list　画像の上にテキスト、右下にアローのレイアウト
+top-list　画像の下にテキストが並ぶレイアウト
+mailform　メールフォーム
+supplier-top　取扱いメーカートップレイアウト
+maker-list　メーカーリスト
+outline-list　会社概要の表
+offices-list　支店・営業所一覧
+*/

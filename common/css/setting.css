@@ -1,0 +1,194 @@
+@charset "utf-8";
+/* reset
+   ========================================================================== */
+* {
+margin: 0 auto;
+padding: 0;
+box-sizing: border-box;
+font-weight: inherit;
+}
+*:focus {
+outline: none;
+}
+*::after,
+*::before {
+box-sizing: border-box;
+}
+html {
+height: 100%;
+}
+body {
+overflow-y: scroll;
+position: relative;
+-webkit-font-smoothing: antialiased;
+text-align: center;
+}
+li {
+list-style: none;
+}
+img {
+vertical-align: bottom;
+max-width: 100%;
+}
+table {
+font-size: inherit;
+font: 100%;
+}
+a,
+a:active,
+a:visited,
+a[href^="tel:"] {
+color: inherit;
+text-decoration: inherit;
+font-style: inherit;
+font-weight: inherit;
+}
+/* normarize reset
+   ========================================================================== */
+h1,
+button,
+input,
+optgroup,
+select,
+textarea {
+margin: 0 auto;
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+h8,
+h8,
+h9 {
+font-weight: inherit;
+}
+/* container
+   ========================================================================== */
+#container {
+width: 100%;
+overflow: hidden;
+opacity: 1;
+transition: opacity 2.0s ease;
+background: #fff;
+}
+.loading #container {
+opacity: 0;
+}
+/* header
+   ========================================================================== */
+header {
+z-index: 400;
+}
+/* footer
+   ========================================================================== */
+footer {
+position: relative;
+z-index: 200;
+}
+/* pagetop
+   ========================================================================== */
+#pagetop {
+position: absolute;
+width: 100%;
+z-index: 300;
+padding: 0 10px 10px 0;
+}
+/* youtube
+   ========================================================================== */
+.youtube div {
+position: relative;
+width: 100%;
+padding-top: 56.25%;
+}
+.youtube div iframe {
+position: absolute;
+top: 0;
+right: 0;
+width: 100% !important;
+height: 100% !important;
+}
+/* slick
+   ========================================================================== */
+.slick-dots li button:before{
+	display:none;
+}
+/*////////////////////////////////////////////////////////////////////
+.sq　ライトブルーの■
+////////////////////////////////////////////////////////////////////*/
+.sq {
+}
+.sq::before {
+content: "■";
+color: #4dc6ff;
+padding-right: 0.5em;
+}
+
+@media screen and (min-width: 750px) {
+main .sp {
+display: none !important;
+}
+main .pc-space {
+content: "";
+display: inline;
+padding-left: 0.5em;
+}
+}
+
+@media screen and (max-width: 750px) {
+main .pc {
+display: none !important;
+}
+}
+/*////////////////////////////////////////////////////////////////////
+ie11対応
+////////////////////////////////////////////////////////////////////*/
+.ie11 {
+display: none;
+}
+.ie11-other {
+display: inline;
+}
+
+@media screen\0 {
+.ie11 {
+display: inline;
+}
+.ie11 img {
+}
+.ie11-other {
+display: none;
+}
+body .img-list section > div > p .wrap,
+.img-list section > a > p .wrap {
+margin:0;
+}
+body .business-top section ul li a img,
+.business-top section ul li p img {
+margin:0;
+}
+body #company-top-list .img-list section .list-txt .ie11 img {
+width:60px;
+vertical-align:-1px;
+opacity:0.7;
+}
+body #greeting .greeting-inner .signature li .name .ie11 img {
+opacity: 0.7;
+}
+body #company-overview .company-overview-detail ul li .txt .post1 {
+letter-spacing: 0.06em;
+}
+body #company-overview .company-overview-detail ul li .txt .ie11 img {
+width: 79px;
+opacity: 0.8;
+}
+body #company-officers .company-officers-detail ul li .txt .ie11 img {
+width: 79px;
+opacity: 0.8;
+vertical-align: -1px;
+}
+body #contact-top section ul li h3 {
+height:58px;
+}
+}
