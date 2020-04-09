@@ -240,7 +240,7 @@ jQuery.extend(jQuery.easing,{easeIn:function(e,t,n,r,i){return jQuery.easing.eas
 
 
 // -------------------
-// SmoothScroll v1.2.1
+// SmoothScroll v2.0.0
 // -------------------
 // update 2020.4.8
 //
@@ -251,14 +251,14 @@ jQuery.extend(jQuery.easing,{easeIn:function(e,t,n,r,i){return jQuery.easing.eas
 // @return jQuery
 // 
 (function($){
-	var diff=0,
-		params={},
+	var base,
 		methods={},
-		hash,
-		base,
+		params={},
 		DEFAULTS={
-			duration:5000,
-			easing:'easeOutQuint',
+			first:'scroll',					// 'scroll' or 'fix' ページを開いたとき、ページ内リンクが付いていた場合、スクロールで動くか、静止させるか。
+			duration:5000,					// スクロールのスピード
+			easing:'easeOutQuint',	// スクロールのイージング
+			header:$('header'),			// ここで指定されたエレメントの高さの差分ずらす、header:'' の場合は、responsiveが反映される。
 			responsive:[{
 				min:0,
 				max:999999,
@@ -281,76 +281,103 @@ jQuery.extend(jQuery.easing,{easeIn:function(e,t,n,r,i){return jQuery.easing.eas
 		},
 		getDiff:function(){
 			var d=0;
-			for(var i=0;i<params.responsive.length;i++){
-				var dt=params.responsive[i];
-				var w=$(window).innerWidth();
-				if(w>=dt.min&&w<dt.max)d=dt.diff;
+			if(params.header==''){
+				for(var i=0;i<params.responsive.length;i++){
+					var dt=params.responsive[i];
+					var w=$(window).innerWidth();
+					if(w>=dt.min&&w<dt.max)d=dt.diff;
+				}
+			}else if(params.header.length>0){
+				d=params.header.height();
 			}
 			return d;
 		}
 	}
 
-	// 
-	$.extend({
-		'SmoothScroll':function(h){
-			
-			hash='#'+h;
-			if($(hash).length<=0)return;
+	function _init(prm){
+		params=$.extend(DEFAULTS,prm);
 
-			var offset=$(hash).offset();
-			if (!(hash&&offset!==null))return;
-			
-			var wst=$(window).scrollTop();
-			if(wst===0)$(window).scrollTop(wst+1);
-
-			var diff=methods.getDiff();
-			
-			base=methods.getBase();
-			if(typeof base==='undefined')return;
-
-			base.scrollTop($(hash).offsetZoomTop()-diff);
-
-			if(window.addEventListener)
-				window.addEventListener('DOMMouseScroll',methods.scrollStop,false);
-			window.onmousewheel=document.onmousewheel=methods.scrollStop;
-
-		}
-	});
-	
-	// 
-	$.fn.extend({
-		'SmoothScroll':function(prm){
-
-			params=$.extend(DEFAULTS,prm);
-
-			return this.each(function(i,e){
-				$(e).on(window.ontouchstart===null?'touchstart':'click',function(){
-				//$(e).on('click',function(){
-					//alert('pagetop');
-
-					var hash=this.hash;
-
-					var offset=$(hash).offset();
-					if (!(hash&&offset!==null))return;
-					
-					var wst=$(window).scrollTop();
-					if(wst===0)$(window).scrollTop(wst+1);
-					
-					var diff=methods.getDiff();
-
-					base=methods.getBase();
-					if(typeof base==='undefined')return;
-
-					base.animate({'scrollTop':$(hash).offsetZoomTop()-diff},params.duration,params.easing,function(){
-						//location.hash = targetHash;
-					});
-
-					if(window.addEventListener)
-						window.addEventListener('DOMMouseScroll',methods.scrollStop,false);
-					window.onmousewheel=document.onmousewheel=methods.scrollStop;
-					//return false;
-				});
+		// base設定
+		var wst=$(window).scrollTop();
+		if(wst===0)$(window).scrollTop(wst+1);
+		base=methods.getBase();
+		if(typeof base==='undefined')return;
+		
+		// 同じページの場合href変更
+		var path=location.origin+location.pathname+location.search;
+		$('a[href*="#"]').each(function(){
+			var href=$(this).get(0).href; 
+			if(href.indexOf(path)>=0){
+				$(this).attr('href',href.replace(path,''));
+			}
+		});
+		
+		// ページ内リンクボタン設定
+		$('a[href^="#"]').each(function(i){
+			$(this).on(window.ontouchstart===null?'touchstart':'click',function(){
+				mov(this.hash,'scroll');
 			});
+		});
+
+		// 初期位置設定
+		if(location.href.indexOf('#')>=0&&location.href.indexOf(path)>=0){
+			switch(params.first){
+				case 'scroll':
+					base=methods.getBase();
+					base.scrollTop(0);
+					_scroll(location.href.replace(path+'#',''));
+					break;
+				case 'fix':
+					_fix(location.href.replace(path+'#',''));
+					break;
+			}
+		}
+	}
+	function _fix(prm){
+		mov('#'+prm,'fix');
+	}
+	function _scroll(prm){
+		mov('#'+prm,'scroll');
+	}
+	// 基本の動き
+	function mov(hash,type){
+		if(typeof base==='undefined')return;
+
+		if($(hash).length<=0)return;
+		if(!(hash&&$(hash).offset()!==null))return;
+
+		var diff=methods.getDiff();
+		
+		switch(type){
+			case 'fix':
+				base.scrollTop($(hash).offsetZoomTop()-diff);
+				break;
+			case 'scroll':
+				base.animate({'scrollTop':$(hash).offsetZoomTop()-diff},params.duration,params.easing,function(){
+					//location.hash = targetHash;
+				});
+				break;
+		}
+
+		if(window.addEventListener)
+			window.addEventListener('DOMMouseScroll',methods.scrollStop,false);
+		window.onmousewheel=document.onmousewheel=methods.scrollStop;
+	}
+
+	// 
+	//$.fn.extend({
+	$.extend({
+		'SmoothScroll':function(prm){
+			switch(typeof prm){
+				case 'string':
+					_scroll(prm);
+					break;
+				case 'object':
+					_init(prm);
+					break;
+				default:
+					break;
+			}
 		}
 	});
 })(jQuery);
