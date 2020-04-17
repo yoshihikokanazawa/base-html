@@ -1,4 +1,4 @@
-// functions.js 2020.04.08 （jQuery3対応）
+// functions.js 2020.04.16 （jQuery3対応）
 
 
 /*! jQuery UI - v1.9.2 - 2013-03-06
@@ -11,19 +11,79 @@ jQuery.effects||function(e,t){var n=e.uiBackCompat!==!1,r="ui-effects-";e.effect
 jQuery.extend(jQuery.easing,{easeIn:function(e,t,n,r,i){return jQuery.easing.easeInQuad(e,t,n,r,i)},easeOut:function(e,t,n,r,i){return jQuery.easing.easeOutQuad(e,t,n,r,i)},easeInOut:function(e,t,n,r,i){return jQuery.easing.easeInOutQuad(e,t,n,r,i)},expoin:function(e,t,n,r,i){return jQuery.easing.easeInExpo(e,t,n,r,i)},expoout:function(e,t,n,r,i){return jQuery.easing.easeOutExpo(e,t,n,r,i)},expoinout:function(e,t,n,r,i){return jQuery.easing.easeInOutExpo(e,t,n,r,i)},bouncein:function(e,t,n,r,i){return jQuery.easing.easeInBounce(e,t,n,r,i)},bounceout:function(e,t,n,r,i){return jQuery.easing.easeOutBounce(e,t,n,r,i)},bounceinout:function(e,t,n,r,i){return jQuery.easing.easeInOutBounce(e,t,n,r,i)},elasin:function(e,t,n,r,i){return jQuery.easing.easeInElastic(e,t,n,r,i)},elasout:function(e,t,n,r,i){return jQuery.easing.easeOutElastic(e,t,n,r,i)},elasinout:function(e,t,n,r,i){return jQuery.easing.easeInOutElastic(e,t,n,r,i)},backin:function(e,t,n,r,i){return jQuery.easing.easeInBack(e,t,n,r,i)},backout:function(e,t,n,r,i){return jQuery.easing.easeOutBack(e,t,n,r,i)},backinout:function(e,t,n,r,i){return jQuery.easing.easeInOutBack(e,t,n,r,i)}});
 
 
-
 /////////////////////////////
 /// 他のjQueryで使う関数 ////
 /////////////////////////////
 
-
-// ---------------------
-// getParam v1.1.0
-// ---------------------
-// update 2020.4.8
+// ------------------------------
+// getEvent 1.0.1
+// ------------------------------
+// update 2020.4.16
+//
+// 各端末でclick,touchイベントを選択
 //
 (function($){
+	$.extend({
+		getEvent:{
+			click:_click,
+			touch:_touch,
+		},
+	});
+	
+	function _click(){
+		return 'click';
+	}
+	function _touch(){
+		return window.ontouchstart===null?'touchstart':'click'
+	}
+})(jQuery);
+
+
+// ------------------------------
+// getHeight 1.0.2
+// ------------------------------
+// update 2020.4.16
+//
+// 高さを測定する関数　※ StickyContent, SmoothScrollで使用
+//
+(function($){
+	$.extend({
+		'getHeight':{
+			header:_header,
+			footer:_footer,
+			body:_body,
+			window:_window,
+		},
+	});
+	
 	//
+	function _header(){
+		return $('header').outerHeight();
+	}
+	function _footer(){
+		return $('footer').outerHeight();
+	}
+	function _body(){
+		return $('#container').outerHeight();
+	}
+	function _window(){
+		return $(window)[0].innerHeight;
+	}
+})(jQuery);
+
+
+// ------------------------------
+// getParam 1.1.3
+// ------------------------------
+// update 2020.4.16
+//
+// URLのパラメーター（例 ?id=1&map=true）を取得
+//
+(function($){
+	$.extend({
+		'getParam':getParam,
+	});
+
 	function getParam() {
 		var url = location.href;
 		var parameters = url.split("?");
@@ -36,35 +96,59 @@ jQuery.extend(jQuery.easing,{easeIn:function(e,t,n,r,i){return jQuery.easing.eas
 		}
 		return paramsArray;
 	}
-	$.extend({
-		'getParam':getParam,
-	});
 })(jQuery);
 
 
-// ----------------------
-// getBase v1.1.0
-// ----------------------
-// update 2020.4.8
+// ------------------------------
+// getBase 1.1.3
+// ------------------------------
+// update 2020.4.16
 //
 // scrollTopを使うエレメントを選ぶ
 //
 (function($){
-	var $base;
+	var $body;
 	$.extend({
-		'getBase':getBase,
+		'getBody':getBody,
 	});
 	
-	//
-	function getBase(){
-		if(typeof $base==='undefined'){
+	function getBody(){
+		return $('html,body');
+		/*
+		if(typeof $body==='undefined'){
 			if($('html').scrollTop()>0){
-				$base=$('html');
+				$body=$('html');
 			}else if($('body').scrollTop()>0){
-				$base=$('body');
+				$body=$('body');
 			}
 		}
-		return $base;
+		return $body;
+		*/
+	}
+})(jQuery);
+
+
+// ------------------------------
+// convertPathHash 1.0.3
+// ------------------------------
+// update 2020.4.16
+//
+// ページリンクにドメインやディレクトリ名が入っている場合、ドメイン・ディレクトリ名を削除する
+//
+(function($){
+	$.extend({
+		'convertPathHash':convertPathHash,
+	});
+	
+	function convertPathHash(){
+		// 同じページの場合href変更
+		var path=location.origin+location.pathname+location.search;
+		$('a[href*="#"]').each(function(){
+			var href=$(this).get(0).href;
+			if(href.indexOf(path)>=0){
+				$(this).attr('href',href.replace(path,''));
+			}
+		});
 	}
 })(jQuery);
 
@@ -74,26 +158,25 @@ jQuery.extend(jQuery.easing,{easeIn:function(e,t,n,r,i){return jQuery.easing.eas
 //////////////////////
 
 
-// ---------------------
-// Check Terminal v1.1.0
-// ---------------------
-// update 2020.4.8
+// ------------------------------
+// Check Terminal 1.2.3
+// ------------------------------
+// update 2020.4.16
 //
 // @param
 // @return {boolean}
 // @throws
 //
 (function($){
-	var ua;
+	var ua=window.navigator.userAgent.toLowerCase();
 	$.extend({
 		'isSmartPhone':isSmartPhone,
 		'isTablet':isTablet,
 		'isPc':isPc,
+		'isIe':isIe,
 	});
 	
-	//
 	function isSmartPhone(){
-		ua=window.navigator.userAgent.toLowerCase();
 		return ((ua.indexOf("windows") != -1 && ua.indexOf("phone") != -1)
 			|| ua.indexOf("iphone") != -1
 			|| ua.indexOf("ipod") != -1
@@ -103,7 +186,6 @@ jQuery.extend(jQuery.easing,{easeIn:function(e,t,n,r,i){return jQuery.easing.eas
 		//return ((ua.indexOf('iPhone') > 0 && ua.indexOf('iPad') == -1) || ua.indexOf('iPod') > 0 || ua.indexOf('Android') > 0);
 	}
 	function isTablet(){
-		ua=window.navigator.userAgent.toLowerCase();
 		return ((ua.indexOf("windows") != -1 && ua.indexOf("touch") != -1)
 			|| ua.indexOf("ipad") != -1
 			|| (ua.indexOf("android") != -1 && ua.indexOf("mobile") == -1)
@@ -115,16 +197,18 @@ jQuery.extend(jQuery.easing,{easeIn:function(e,t,n,r,i){return jQuery.easing.eas
 	function isPc(){
 		return !isSmartPhone()&&!isTablet();
 	}
+	function isIe(){
+		return (ua.match(/(msie|MSIE|edge)/)||ua.match(/(T|t)rident/))?true:false;
+	}
 })(jQuery);
 
 
-// --------------------
-// offsetZoomTop v1.1.1
-// --------------------
-// update 2020.4.8
+// ------------------------------
+// offsetZoomTop 1.1.7
+// ------------------------------
+// update 2020.4.16
 //
 // cssのzoomが1じゃないときのoffset topの位置が変わるので調整。
-//
 //
 // @param
 // @return {number}（高さ位置）
@@ -139,7 +223,6 @@ jQuery.extend(jQuery.easing,{easeIn:function(e,t,n,r,i){return jQuery.easing.eas
 		'offsetZoomTop':offsetZoomTop,
 	});
 	
-	//
 	function offsetZoomTop(){
 		var top=$(window).scrollTop();
 		var zoom=(parseInt($('html').css('zoom'))||parseInt($('body').css('zoom'))||1);
@@ -148,26 +231,25 @@ jQuery.extend(jQuery.easing,{easeIn:function(e,t,n,r,i){return jQuery.easing.eas
 })(jQuery);
 
 
-// ----------------------
-// checkScrollDiff v1.1.0
-// ----------------------
-// update 2020.4.8
+// ------------------------------
+// checkScrollDiff 1.1.3
+// ------------------------------
+// update 2020.4.16
 //
 // 過去3つのscrollTopを取得し同じ値がある場合ノーカウント（0）とする。
 // iphone iOs用対策 scrollイベント時 scrollTopを取得すると過去3つの値に戻る場合がある。
 //
 (function($){
-	var $base,
+	var $body,
 		checkTop=[-1,-1,-1];
 	$.extend({
 		'checkScrollDiff':checkScrollDiff,
 	});
 	
-	//
 	function checkScrollDiff(){
-		if(typeof $base==='undefined')
-			$base=$.getBase();
-		var top=$base.scrollTop();
+		if(typeof $body==='undefined')
+			$body=$.getBody();
+		var top=$body.scrollTop();
 		for(var i=0;i<3;i++)
 			if(checkTop[i]==top)
 				return 0;
@@ -180,16 +262,16 @@ jQuery.extend(jQuery.easing,{easeIn:function(e,t,n,r,i){return jQuery.easing.eas
 })(jQuery);
 
 
-// ---------------------------
-// checkScrollDirection v1.1.0
-// ---------------------------
-// update 2020.4.8
+// ------------------------------
+// checkScrollDirection 1.1.3
+// ------------------------------
+// update 2020.4.16
 //
 // 過去3つのscrollTopを取得し差の平均値を取り向きを判定させる
 // iphoneだけじゃなく汎用性があるように
 //
 (function($){
-	var $base,
+	var $body,
 		checkTop=[],
 		id,
 		MAX=4;
@@ -198,15 +280,14 @@ jQuery.extend(jQuery.easing,{easeIn:function(e,t,n,r,i){return jQuery.easing.eas
 		'checkScrollDirection':checkScrollDirection,
 	});
 	
-	//
 	function _reset(){
 		for(var i=0;i<MAX;i++)
 			checkTop[i]=-1;
 	}
 	function checkScrollDirection(){
-		if(typeof $base==='undefined')
-			$base=$.getBase();
-		var top=$base.scrollTop(),
+		if(typeof $body==='undefined')
+			$body=$.getBody();
+		var top=$body.scrollTop(),
 			count=0,
 			d=0;
 		for(var i=0;i<MAX;i++){
@@ -239,162 +320,134 @@ jQuery.extend(jQuery.easing,{easeIn:function(e,t,n,r,i){return jQuery.easing.eas
 
 
 
-// -------------------
-// SmoothScroll v2.0.0
-// -------------------
-// update 2020.4.8
+// ------------------------------
+// SmoothScroll 3.0.2
+// ------------------------------
+// update 2020.4.16
 //
 // ページ内遷移の場合、スムーズにスクロールさせる。
 //
-//
-// @param {string} duration, {string} easing, {object} responsive（）
-// @return jQuery
+// @param {string} first, {string} duration, {string} easing,
+// @return {jQuery}
 // 
 (function($){
-	var base,
+	var id,
+		$body,
 		methods={},
 		params={},
 		DEFAULTS={
-			first:'scroll',					// 'scroll' or 'fix' ページを開いたとき、ページ内リンクが付いていた場合、スクロールで動くか、静止させるか。
-			duration:5000,					// スクロールのスピード
-			easing:'easeOutQuint',	// スクロールのイージング
-			header:$('header'),			// ここで指定されたエレメントの高さの差分ずらす、header:'' の場合は、responsiveが反映される。
-			responsive:[{
-				min:0,
-				max:999999,
-				diff:0,
-			},],
+			first:'scroll',												// 'scroll' or 'fix' ページ遷移したときにハッシュタグが付いている場合、スクロールさせる。
+			duration:5000,												// スクロールのスピード
+			easing:'easeOutQuint',								// スクロールのイージング
+			setHash:true,													// ハッシュを付けるか
+			setHashNot:['#contaienr','#pagetop'],	// ハッシュを付けるときの除外するハッシュ
 		};
-	params=$.extend(DEFAULTS,params);
-	methods={
-		scrollStop:function(){
-			base.stop(true);
-		},
-		getBase:function(){
-			var $eq;
-			if($('html').scrollTop()>0){
-				$eq=$('html');
-			}else if($('body').scrollTop()>0){
-				$eq=$('body');
-			}
-			return $eq;
-		},
-		getDiff:function(){
-			var d=0;
-			if(params.header==''){
-				for(var i=0;i<params.responsive.length;i++){
-					var dt=params.responsive[i];
-					var w=$(window).innerWidth();
-					if(w>=dt.min&&w<dt.max)d=dt.diff;
-				}
-			}else if(params.header.length>0){
-				d=params.header.height();
-			}
-			return d;
-		}
+	params=$.extend(true,DEFAULTS,params);
+	$.extend({
+		'SmoothScroll':SmoothScroll,
+	});
+
+	function SmoothScroll(prm){
+		params=$.extend(true,DEFAULTS,prm);
+		$body=$.getBody();
+		$.convertPathHash();
+		_set();
+		_first(params.first);
+		return {}
 	}
-
-	function _init(prm){
-		params=$.extend(DEFAULTS,prm);
-
-		// base設定
-		var wst=$(window).scrollTop();
-		if(wst===0)$(window).scrollTop(wst+1);
-		base=methods.getBase();
-		if(typeof base==='undefined')return;
-		
-		// 同じページの場合href変更
-		var path=location.origin+location.pathname+location.search;
-		$('a[href*="#"]').each(function(){
-			var href=$(this).get(0).href; 
-			if(href.indexOf(path)>=0){
-				$(this).attr('href',href.replace(path,''));
-			}
-		});
-		
+	
+	// リンク設定
+	function _set(){
 		// ページ内リンクボタン設定
 		$('a[href^="#"]').each(function(i){
-			$(this).on(window.ontouchstart===null?'touchstart':'click',function(){
-				mov(this.hash,'scroll');
+			$(this).on($.getEvent.click(),function(){
+				_scroll($(this).attr('href'),'scroll');
+				return false;
 			});
 		});
+	}
 
-		// 初期位置設定
-		if(location.href.indexOf('#')>=0&&location.href.indexOf(path)>=0){
-			switch(params.first){
+	// 初期位置設定
+	function _first(type){
+		var path=location.origin+location.pathname+location.search;
+		var href=location.href;
+		if(href.indexOf('#')>=0&&href.indexOf(path)>=0){
+			switch(type){
 				case 'scroll':
-					base=methods.getBase();
-					base.scrollTop(0);
-					_scroll(location.href.replace(path+'#',''));
+				default:
+					$body.scrollTop(0);
+					_scroll(location.hash,'scroll');
 					break;
 				case 'fix':
-					_fix(location.href.replace(path+'#',''));
+					_scroll(location.hash,'fix');
 					break;
 			}
 		}
 	}
-	function _fix(prm){
-		mov('#'+prm,'fix');
-	}
-	function _scroll(prm){
-		mov('#'+prm,'scroll');
-	}
+	
 	// 基本の動き
-	function mov(hash,type){
-		if(typeof base==='undefined')return;
-
+	function _scroll(hash,type){
+		//if(typeof $body==='undefined')return;
+		if(type==='undefined')type='scroll';
 		if($(hash).length<=0)return;
 		if(!(hash&&$(hash).offset()!==null))return;
-
-		var diff=methods.getDiff();
-		
+		//var diff=$.getHeight.header();
 		switch(type){
 			case 'fix':
-				base.scrollTop($(hash).offsetZoomTop()-diff);
+				clearInterval(id);
+				$body.scrollTop($(hash).offsetZoomTop()-$.getHeight.header());
 				break;
 			case 'scroll':
-				base.animate({'scrollTop':$(hash).offsetZoomTop()-diff},params.duration,params.easing,function(){
-					//location.hash = targetHash;
+				//$body.animate({'scrollTop':$(hash).offsetZoomTop()-diff},params.duration,params.easing,function(){
+				intervalAnimate(hash,function(){
+					if(params.setHash&&params.setHashNot.indexOf(hash)==-1){
+						//location.hash = hash;
+						history.pushState(null,null,hash)
+					}
 				});
 				break;
 		}
-
-		if(window.addEventListener)
-			window.addEventListener('DOMMouseScroll',methods.scrollStop,false);
-		window.onmousewheel=document.onmousewheel=methods.scrollStop;
+		$(window).on('wheel',_wheel);
+		$('body').on('touchstart',_wheel);
 	}
-
-	// 
-	//$.fn.extend({
-	$.extend({
-		'SmoothScroll':function(prm){
-			switch(typeof prm){
-				case 'string':
-					_scroll(prm);
-					break;
-				case 'object':
-					_init(prm);
-					break;
-				default:
-					break;
+	
+	// ホイールを動かしたときanimateストップ
+	function _wheel(){
+		clearInterval(id);
+		//$body.stop(true);
+	}
+	
+	// setIntervalを使ったanimate
+	// ※jQuery.animateと違うのは、動きながらも目的位置の情報を取得している。
+	function intervalAnimate(hash,callback){
+		clearInterval(id);
+		var nowY=$body.scrollTop();
+		id=setInterval(function(){
+			var movY=getMovY(hash);
+			nowY+=(movY-nowY)*0.15;
+			if(Math.abs(nowY-movY)<0.1){
+				$body.scrollTop(movY);
+				clearInterval(id);
+				if(typeof callback === 'function')callback();
+			}else{
+				$body.scrollTop(nowY);
 			}
-		}
-	});
+		},15);
+	}
+	function getMovY(hash){
+		var movY=$(hash).offsetZoomTop()-$.getHeight.header();
+		// フッター近くの場合、位置を変更
+		var minY=$.getHeight.body()-$.getHeight.window();
+		if(movY>minY)movY=minY;
+		return movY;
+	}
 })(jQuery);
 
-/*
-	if(!$.isSmartPhone()){
-		$('a[href^="tel:"]').css({'cursor':'default'}).on('click', function(e) {
-			e.preventDefault()
-		});
-	}
-*/
 
-
-// ----------------
-// Sns Share 1.1.0
-// ----------------
-// update 2020.4.8
+// ------------------------------
+// Sns Share 1.1.3
+// ------------------------------
+// update 2020.4.16
 //
 // 各シェアボタンの設定
 //
@@ -411,7 +464,7 @@ jQuery.extend(jQuery.easing,{easeIn:function(e,t,n,r,i){return jQuery.easing.eas
 	}
 	function facebookLink(){
 		$(this).each(function(){
-			$(this).on('click',function(){
+			$(this).on($.getEvent.click(),function(){
 				openWindow("http://www.facebook.com/sharer/sharer.php?u=" + encodeURIComponent(window.location.hostname) + window.location.pathname);
 				return false;
 			});
@@ -419,7 +472,7 @@ jQuery.extend(jQuery.easing,{easeIn:function(e,t,n,r,i){return jQuery.easing.eas
 	};
 	function twitterLink(){
 		$(this).each(function(){
-			$(this).on('click',function(){
+			$(this).on($.getEvent.click(),function(){
 				openWindow('http://twitter.com/share?url=' + encodeURIComponent(window.location.hostname) + window.location.pathname + "&text=" + encodeURIComponent($("title").text()));
 				return false;
 			});
@@ -427,7 +480,7 @@ jQuery.extend(jQuery.easing,{easeIn:function(e,t,n,r,i){return jQuery.easing.eas
 	};
 	function lineLink(){
 		$(this).each(function(){
-			$(this).on('click',function(){
+			$(this).on($.getEvent.click(),function(){
 				openWindow('http://line.me/R/msg/text/?' + encodeURIComponent($("title").text()) + '%0D%0A' + encodeURIComponent(window.location.href));
 				return false;
 			});
@@ -436,98 +489,10 @@ jQuery.extend(jQuery.easing,{easeIn:function(e,t,n,r,i){return jQuery.easing.eas
 })(jQuery);
 
 
-// --------------------
-// SmartRollover 1.2.0
-// --------------------
-// update 2020.4.8
-//
-// Change SmartPhone Images
-// マウスーオーバーした場合に画像ファイル名の -off　を -on に変える
-// ※古い機能のため今後変更予定なし
-//
-(function($){
-	$.extend({
-		'SmartRollover':function(){
-			function smartRollover() {
-				if(document.getElementsByTagName) {  
-					var images = document.getElementsByTagName("img");  
-					for(var i=0; i < images.length; i++){
-						if(!$.isSmartPhone()){
-							if(images[i].getAttribute("src").match("-off.")){
-								var target=images[i];
-								if(images[i].parentElement.tagName=="A"){
-									//target=images[i].parentElement;//親要素にaがある場合はaタグに設定
-									target.parentElement.onmouseover = on(images[i]);
-									target.parentElement.onmouseout = off(images[i]);
-								}
-							}
-						}
-					}  
-				}
-				function on(img){
-					return function(){
-						img.setAttribute("src", img.getAttribute("src").replace("-off.", "-on."));
-						img.setAttribute("style","opacity:1");
-					}
-				}
-				function off(img){
-					return function(){
-						img.setAttribute("src", img.getAttribute("src").replace("-on.", "-off."));
-					}
-				}
-			}
-			if(window.addEventListener) {  
-				window.addEventListener("load", smartRollover, false);  
-			}  
-			else if(window.attachEvent) {  
-				window.attachEvent("onload", smartRollover);  
-			}
-		}
-	});
-})(jQuery);
-
-
-// --------------------
-// ImageChange v1.2.0
-// --------------------
-// update 2020.4.8
-//
-// Change SmartPhone Images
-// $.ImageChange('sp')で全体の画像内ファイル名 -pc を -sp に買える
-// $.ImageChange('pc')の場合は、-spを-pcに買える
-// ※古い機能のため今後変更予定なし
-//
-(function($){
-	$.extend({
-		'ImageChange':function(s){
-			var images = document.getElementsByTagName("img");  
-
-			for(var i=0; i < images.length; i++) {  
-				var target=images[i];
-				switch(s){
-					case 'pc':
-						if(target.getAttribute("src").match("-sp")){
-							target.setAttribute("src", target.getAttribute("src").replace("-sp", "-pc"));
-						}
-						break;
-					case 'sp':
-					default:
-						if(target.getAttribute("src").match("-pc")){
-							target.setAttribute("src", target.getAttribute("src").replace("-pc", "-sp"));
-						}
-						break;
-				}
-			}
-		}
-	});
-})(jQuery);
-
-
-
-// --------------------
-// HamburgerMenu 2.0.0
-// --------------------
-// update 2020.4.8
+// ------------------------------
+// HamburgerMenu 2.0.6
+// ------------------------------
+// update 2020.4.16
 //
 // ハンバーガーメニュー
 //
@@ -545,36 +510,6 @@ jQuery.extend(jQuery.easing,{easeIn:function(e,t,n,r,i){return jQuery.easing.eas
 //
 // setting.css
 //
-// header #ganv span // ハンバーガーアイコン箇所
-// header #gnav.open span //ハンバーガーアイコン箇所
-// 
-// header {
-// min-height: 100%;
-// pointer-events: none;
-// }
-// header > *:not(#gnav){
-// pointer-events: auto;
-// }
-// header #gnav .gnav-inner {
-// position: absolute;
-// transition: 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
-// z-index: -1;
-// transform: translateX(100%);
-// min-height:100%;
-// cursor-events:auto;
-// }
-//
-// header #gnav.open .gnav-inner {
-// transform: translateX(0);
-// height: 100%;
-// min-height: 100%;
-// pointer-events: auto;
-// }
-//
-// header #gnav.open .gnav-inner > * {
-// position:(absolute以外); ※この部分の高さを計測しスクロールを停止などさせているため、原則absolute禁止
-// }
-//
 // - params
 // 
 // inner : wrap navigateion jQuery Element
@@ -587,22 +522,23 @@ jQuery.extend(jQuery.easing,{easeIn:function(e,t,n,r,i){return jQuery.easing.eas
 
 	//
 	function hamburgerMenu(params){
-		var $th=$(this);
-		var DEFAULTS={
-			//contents:$th.find('.gnav-contents'),
-			inner:$th.find('.gnav-inner'),
-			hamburger:$th.find('.gnav-hamburger'),
-			closeBtn:$th.find('.gnav-sp-close'),
-		};
-		params=$.extend(DEFAULTS,params);
+		var $th=$(this),
+			DEFAULTS={
+				//contents:$th.find('.gnav-contents'),
+				inner:$th.find('.gnav-inner'),
+				hamburger:$th.find('.gnav-hamburger'),
+				closeBtn:$th.find('.gnav-sp-close'),
+			};
+		params=$.extend(true,DEFAULTS,params);
 		// init
+		$.convertPathHash();
 		$th.addClass('close');
 		params.inner.css({
 			'overflow':'auto',
 			'-webkit-overflow-scrolling':'touch'
 		});
 		// setting
-		params.hamburger.on('click',function(){
+		params.hamburger.on($.getEvent.touch(),function(){
 			if($th.hasClass('open')){
 				menuClose();
 			}else{
@@ -610,15 +546,18 @@ jQuery.extend(jQuery.easing,{easeIn:function(e,t,n,r,i){return jQuery.easing.eas
 			}
 			return false;
 		});
-		params.closeBtn.on('click',function(){
+		params.closeBtn.on($.getEvent.click(),function(){
 			menuClose();
 			return false;
 		});
-		$th.find('ul li a[href^="#"]').on('click',function(){
-			menuClose();
+		$th.find('ul li a[href^="#"]').each(function(){
+			$(this).on($.getEvent.click(),function(){
+				console.log($(this).attr('href'));
+				menuClose();
+			});
 		});
 		function menuOpen(){
-			if(!$th.hasClass('open')){
+			if(!$('body').hasClass('gnavOpen')){
 				$th.addClass('open');
 				$th.removeClass('close');
 				params.inner.scrollTop(0);
@@ -633,11 +572,11 @@ jQuery.extend(jQuery.easing,{easeIn:function(e,t,n,r,i){return jQuery.easing.eas
 			}
 		}
 		function menuClose(){
-			if($th.hasClass('open')){
-				$th.removeClass('open');
-				$th.addClass('close');
-				$.BodyScroll.start();
+			console.log('close');
+			if($('body').hasClass('gnavOpen')){
+				$th.removeClass('open').addClass('close');
 				$('body').removeClass('gnavOpen').addClass('gnavClose');
+				$.BodyScroll.start();
 			}
 		}
 		return $th;
@@ -645,10 +584,10 @@ jQuery.extend(jQuery.easing,{easeIn:function(e,t,n,r,i){return jQuery.easing.eas
 })(jQuery);
 
 
-// -----------------
-// BodyScroll 1.3.0
-// -----------------
-// update 2020.4.8
+// ------------------------------
+// BodyScroll 1.3.2
+// ------------------------------
+// update 2020.4.16
 //
 // 全体のスクロールをストップさせる
 //
@@ -708,17 +647,17 @@ jQuery.extend(jQuery.easing,{easeIn:function(e,t,n,r,i){return jQuery.easing.eas
 			'width':'',
 			'top':'',
 		});
-		$('html, body').prop({scrollTop:currentScrollY});				
+		$('html,body').prop({scrollTop:currentScrollY});				
 	}
 })(jQuery);
 
 
-// --------------------
-// StickyHeader 2.2.1
-// --------------------
-// update 2020.4.8
+// ------------------------------
+// StickyHeader 2.2.3
+// ------------------------------
+// update 2020.4.16
 //
-// スティッキーヘッダー
+// スティッキーヘッダー // 非推奨 → 推奨 StickyContent
 //
 //
 // - html
@@ -766,7 +705,7 @@ jQuery.extend(jQuery.easing,{easeIn:function(e,t,n,r,i){return jQuery.easing.eas
 					diff:0,
 				},],
 			}
-		params=$.extend(DEFAULT,params);
+		params=$.extend(true,DEFAULT,params);
 		$(window).on('scroll',handler);
 		$(window).on('load',init);
 
@@ -838,17 +777,16 @@ jQuery.extend(jQuery.easing,{easeIn:function(e,t,n,r,i){return jQuery.easing.eas
 })(jQuery);
 
 
-// ---------------------
-// StickyContents v1.3.0
-// ---------------------
-// update 2020.4.8
+// ------------------------------
+// StickyPagetop 3.0.1
+// ------------------------------
+// update 2020.4.16
 //
-// ページトップ
-//
+// ページトップ // 非推奨 → 推奨 StickyContent
 //
 // <div id="pagetop"><a href="#container">PAGE TOP</a></div>
 // #pagetop{
-//  任意
+//  任意 //footerStickyOffがtrueのときはclass="sticky"が無くなり、この部分が反映されます。
 // }
 // #pagetop.sticky{
 //  position:fixed;　//（強制的にfixedにされます。）
@@ -857,101 +795,223 @@ jQuery.extend(jQuery.easing,{easeIn:function(e,t,n,r,i){return jQuery.easing.eas
 //  padding:0 0 50px 50px;//パディングでボタン位置を決める
 // }
 //
-(function($){
+jQuery(function($){
 	var count=0;
 	$.fn.extend({
-		'StickyContents':StickyContents,
-		'StickyPagetop':StickyContents,		// 非推奨
+		'StickyPagetop':function(params){
+			var DEFAULTS={
+				duration:200, //表示スピード
+				scrollHide:true, // スクロール中非表示にする
+				topHide:false, // ページトップのとき非表示にする
+				footerStickyOff:true, //フッターが画面に出てきたときにsticky機能をオフにするか
+				footerSticky:$('footer'),
+			};
+			params=$.extend(true,DEFAULTS,params);
+
+			$(this).each(function(){
+	
+				var $th=$(this);
+	
+				$th.wrap('<div id="stickypagetop_'+count+'" />');
+				var $fade=$('#stickypagetop_'+count);
+				$fade.css({'z-index':$th.css('z-index'),'position':'relative'});
+				count++;
+	
+				var $footer=params.footerSticky;
+				var isShow=false;
+				var timeoutID=setTimeout(function(){},0);
+	
+				$('#container').css({'position':'relative'});
+				$th.addClass('sticky').css({'position':'fixed','top':'inherit'});
+				 
+				$(window).on('load scroll',function(){
+					var top=$(window).scrollTop();
+					var winH=$.getHeight.window();//$(window)[0].innerHeight;
+					var conH=$.getHeight.body();//$('#container').outerHeight();
+					var footerH=$footer.outerHeight();
+					
+					// フッターが画面に出てきたときにStickyをオフにする
+					if((top+winH>conH-footerH)&&params.footerStickyOff){
+						var bottom=top+winH-conH+footerH;
+						$th.removeClass('sticky').css({'position':'','bottom':'','top':''});
+						clearTimeout(timeoutID);
+						$fade.stop().show().css({'opacity':1});
+						//$th.stop().show().css({'opacity':1});//
+						isShow=true;
+					}else{
+						$th.addClass('sticky').css({'position':'fixed','bottom':0,});
+						if(top<=50){
+							if(params.topHide)hidePagetop();
+						}else{
+							if(params.scrollHide)hidePagetop();
+							if(!isShow)showPagetop();
+						}
+					}
+				});
+				$th.on($.getEvent.click(),function(){
+					clearTimeout(timeoutID);
+					if(isShow){
+						$fade.stop().fadeOut();
+						//$th.stop().fadeOut();
+						isShow=false;
+					}
+				});
+				function hidePagetop(){
+					clearTimeout(timeoutID);
+					$fade.stop().fadeOut(params.duration);
+					//$th.stop().hide();//
+					isShow=false;
+				}
+				function showPagetop(){
+					clearTimeout(timeoutID);
+					timeoutID=setTimeout(function(){
+						$th.show();
+						$fade.stop().fadeIn(params.duration);
+						//$th.stop().fadeIn(params.duration);
+						isShow=true;
+					},200);
+				}
+			});
+		}
+	});
+});
+
+
+// ------------------------------
+// StickyContent v1.4.3
+// ------------------------------
+// update 2020.4.16
+//
+// 汎用性スティッキー機能
+//
+(function($){
+	//var count=0;
+	$.fn.extend({
+		'StickyContent':StickyContent,
 	});
 	
 	//
-	function StickyContents(params){
-		var DEFAULTS={
-			duration:50,						// 表示スピード
-			scrollHide:false,				// スクロール中非表示にする
-			topHide:false,					// ページトップのとき非表示にする
-			footerStickyOff:false,		// フッターが画面に出てきたときにsticky機能をオフにするか。footerと#pagetopが重なるとclass="sticky"が無くなります。
-			footerSticky:$('footer'),
-		};
-		params=$.extend(DEFAULTS,params);
+	function StickyContent(params){
+		var id,
+			tempTop=-1,
+			DEFAULTS={
+				stickyOff:{
+					header:false,						// {boolean} : ヘッダーが画面に出てきたときにsticky機能をオフにする。 ヘッダーの高さは、$('#container').css('padding-top');　を基準にする。
+					footer:false,						// {boolean} : フッターが画面に出てきたとき（$thと重なったとき）にsticky機能をオフにする。
+				},
+				hide:{
+					header:false,						// {boolean} : ヘッダーが画面に出てきたときに非表示にする。(class="hide"の追加）
+					scrollUp:false,					// {boolean} : スクロールアップ中非表示にする。(class="hide"の追加）
+					scrollDown:false,				// {boolean} : スクロールダウン中非表示にする。(class="hide"の追加）
+					scrollTimeout:3000,			// {number} : スクロール中に非表示から止まったときに表示するまでの秒数 1/1000秒　　0の場合は表示しない
+				},
+			};
+		params=$.extend(true,DEFAULTS,params);
+		$(this).each(set);
+		
+		function set(){
+			var $th=$(this),
+				$body=$.getBody(),
+				timeoutID=setTimeout(function(){},0);
 
-		$(this).each(function(){
-			var $th=$(this);
+			$th.addClass('sticky');
+			$(window).on('load',_load);
+			$(window).on('scroll',_scroll);
+			$th.on($.getEvent.click(),_click);
 
-			$th.wrap('<div id="stickypagetop_'+count+'" />');
-			var $fade=$('#stickypagetop_'+count);
-			$fade.css({'z-index':$th.css('z-index'),'position':'relative'});
-			count++;
 
-			var $footer=params.footerSticky;
-			var isShow=false;
-			var timeoutID=setTimeout(function(){},0);
+			function _load(){
+				_check($body.scrollTop());
+			}
+			function _scroll(){
+				var scrollTop=$body.scrollTop();
+				if(tempTop!=scrollTop)_check(scrollTop);
+				tempTop=scrollTop;
+			}
+			function _click(){
+				$th.removeClass('hide');
+			}
+			
+			function _check(scrollTop){
 
-			$('#container').css({'position':'relative'});
-			//$th.addClass('sticky').css({'position':'fixed','top':'inherit'});20200121
-			$th.addClass('sticky');//20200121追加
-			$th.children().css({'position':'fixed','top':'inherit'});//20200121追加
-			 
-			$(window).on('load scroll',function(){
-				var top=$(window).scrollTop();
-				var winH=$(window)[0].innerHeight;
-				var conH=$('#container').outerHeight();
-				var footerH=$footer.outerHeight();
+				var winH=$.getHeight.window(),//$(window)[0].innerHeight,
+					headerH=$.getHeight.header(),
+					footerH=$.getHeight.footer(),
+					bodyH=$.getHeight.body();
 				
-				// フッターが画面に出てきたときにStickyをオフにする
-				if((top+winH>conH-footerH)&&params.footerStickyOff){
-					var bottom=top+winH-conH+footerH;
-					//$th.removeClass('sticky').css({'position':'','bottom':'','top':''});20200121
-					$th.removeClass('sticky');//20200121追加
-					$th.children().css({'position':'','bottom':'','top':''});//20200121追加
-					clearTimeout(timeoutID);
-					$fade.stop().show().css({'opacity':1});
-					//$th.stop().show().css({'opacity':1});//
-					isShow=true;
-				}else{
-					//$th.addClass('sticky').css({'position':'fixed','bottom':0,});20200121
-					$th.addClass('sticky');
-					$th.children().css({'position':'fixed','bottom':0,});
-					if(top<=150){//20200121変更（50→150）
-						if(params.topHide)hidePagetop();
-					}else{
-						if(params.scrollHide)hidePagetop();
-						if(!isShow)showPagetop();
+				// フッターが画面に出てきたときにStickyをオフ
+				if(params.stickyOff.footer){
+					if(scrollTop>bodyH-footerH-winH){
+						clearTimeout(id);
+						$th.removeClass('sticky');
+						$th.removeClass('hide');
+						return;
 					}
 				}
-			});
-			$th.on('click',function(){
-				clearTimeout(timeoutID);
-				if(isShow){
-					$fade.stop().fadeOut();
-					//$th.stop().fadeOut();
-					isShow=false;
+
+				// ヘッダーが画面に出てきたときにStickyをオフ
+				if(params.stickyOff.header){
+					if(scrollTop<headerH){
+						clearTimeout(id);
+						$th.removeClass('sticky');
+						$th.removeClass('hide');
+						return;
+					}
 				}
-			});
-			function hidePagetop(){
-				clearTimeout(timeoutID);
-				$fade.stop().fadeOut(params.duration);
-				//$th.stop().hide();//
-				isShow=false;
+				
+				$th.addClass('sticky');
+				
+				// ヘッダーが画面に出てきたときに非表示（class="hide"追加）
+				if(params.hide.header){
+					if(scrollTop<headerH){
+						$th.addClass('hide');
+						return;
+					}
+				}
+
+				// 下にスクロールしている場合は非表示（class="hide"追加）
+				if(params.hide.scrollDown){
+					if($.checkScrollDirection()<0){
+						setHideTimeout();
+						return;
+					}
+				}
+
+				// 上にスクロールしている場合は非表示（class="hide"追加）
+				if(params.hide.scrollUp){
+					if($.checkScrollDirection()>0){
+						setHideTimeout();
+						return;
+					}
+				}
+
+				$th.removeClass('hide');
+				return;
 			}
-			function showPagetop(){
-				clearTimeout(timeoutID);
-				timeoutID=setTimeout(function(){
-					$th.show();
-					$fade.stop().fadeIn(params.duration);
-					//$th.stop().fadeIn(params.duration);
-					isShow=true;
-				},50);//20200121変更（200→50）
+			
+			function setHideTimeout(){
+				$th.addClass('hide');
+
+				if(params.hide.scrollTimeout>0){
+					clearTimeout(id);
+					id=setTimeout(function(){
+						$th.removeClass('hide');
+					},params.hide.scrollTimeout);
+					return;
+				}
+
+				return;
+
 			}
-		});
+		}
 	}
 })(jQuery);
 
 
-// -----------------------
-// ScrollAnimation v2.3.0
-// -----------------------
-// update 2020.4.8
+// ------------------------------
+// ScrollAnimation v2.3.2
+// ------------------------------
+// update 2020.4.16
 //
 // <div class="sa" data-delay="30" data-margin="50" data-trigger=".triggerTag"></div>
 // <div class="triggerTag"></div> //
@@ -978,7 +1038,7 @@ jQuery.extend(jQuery.easing,{easeIn:function(e,t,n,r,i){return jQuery.easing.eas
 			showClass:'show',
 			mode:'once',						// 'once' or 'repeat'
 		};
-		params=$.extend(DEFAULTS,params);
+		params=$.extend(true,DEFAULTS,params);
 		
 		setTimeout(scrollAnimationFunc,1000);
 		$(window).on('scroll',scrollAnimationFunc);
@@ -1062,150 +1122,64 @@ jQuery.extend(jQuery.easing,{easeIn:function(e,t,n,r,i){return jQuery.easing.eas
 })(jQuery);
 
 
-// ----------------------
-// ContentsScroll v0.9.2
-// ----------------------
-// update 2020.4.8
+// ------------------------------
+// ContentsScroll v0.9.4
+// ------------------------------
+// update 2020.4.16
 //
 // コンテンツスクロール制御
+// ※ SmoothScroll, StickyContent は独自仕様で作り必要あり。
 //
 (function($){
 	$.fn.extend({
 		'ContentsScroll':ContentsScroll,
 	});
 
-	//
 	function ContentsScroll(params){
-		var DEFAULTS={
-			speed:'.5s cubic-bezier(.09,.34,.25,1) 0s'
-		};
-		var op=$.extend(DEFAULTS,params);
-		var $t=$(this);
-		var $index=$('<div id="scroll-index" />');
-		var $index_bar=$('<p class="scroll-index--bar"><span></span></p>');
-		var $index_name=$('<p class="scroll-index--name" />');
-		var $scroll=$('[data-scroll]');
-		var $logo=$('.site--logo');
-		var $gnav=$('#gnav');
-		var $gnav_btn=$gnav.find('.gnav--btn')
-		var $cart=$('#s_cart');
-		var $footer=$('#footer');
-		var $top_visual=$('#top_visual');
-		var hash=location.hash;
-		var h={
-			t:function(){ var v=$t.innerHeight(); return v; },
-			bar:function(){ var v=$index_bar.innerHeight(); return v; }
-		};
-		var index={
-			scroll:0
-		};
-		var bool={
-			scroll:[]
-		};
-		var sizeSet=function(){
-			if(!is_ie){
-				$('body').height(h.t());
-			};
-		};
-		var set=function(){
-			var st=GN.st();
-			var wh=GN.wh();
-			var stwh=(st+(wh/1.4));
-			var bar=((st*h.bar())/(h.t()-wh));
+		if($.isIe())return;
 
-			if(!is_ie){
-				$t.css({ transform:'translateY(-'+st+'px)' });
+		var $th=$(this),
+			hash=location.hash,
+			DEFAULTS={
 			};
-
-			if($footer.length){
-				if((st+wh)>(h.t()-$footer.innerHeight())){
-					$index.css({ transform:'translateY(-'+$footer.innerHeight()+'px)' });
-				}else{
-					$index.css({ transform:'none' });
-				};
-			};
-
-			if($top_visual.length){
-				if(st>wh){
-					$logo.stop(false).fadeIn(300);
-				}else{
-					$logo.stop(false).fadeOut(300);
-				};
-				if(st>(wh/1.4)){
-					$cart.addClass('on');
-				}else{
-					$cart.removeClass('on');
-				};
-				$top_visual.css({ transform:'translateY(-'+(st/4)+'px)' });
-				if(st>(wh/2)){
-					$gnav_btn.removeClass('white');
-				}else{
-					$gnav_btn.addClass('white');
-				};
-				if(st>($index.innerHeight()+60)){
-					$index.stop().fadeIn(300);
-				}else{
-					$index.fadeOut(300);
-				};
-			};
-
-			$index_bar.find('span').height(bar);
-			$scroll.each(function(i){
-				var $this=$(this);
-				var this_top=$this.offset().top;
-				var this_h=$this.innerHeight();
-				var name=$this.data('scroll');
-				if(stwh>this_top&&stwh<(this_top+this_h)-10){
-					index.scroll=i;
-					if(!bool.scroll[i]){
-						bool.scroll[i]=true;
-						$index_name.removeClass('changed');
-						$index_name.html(name).addClass('changed');
-					};
-				}else{
-					bool.scroll[i]=false;
-					if(index.scroll==i){
-						$index_name.removeClass('changed');
-					};
-				};
+		init();
+		$(window).on('load',_load);
+		$(window).on('resize',_resize);
+		$(window).on('scroll',_scroll);
+		
+		function _load(){
+			setSize();
+			setPosFirst();
+		}
+		function _resize(){
+			setTimeout(function(){
+				setSize();
+			},50);
+		}
+		function _scroll(){
+			setSize();
+			setPos();
+		}
+		
+		function init(){
+			params=$.extend(true,DEFAULTS,params);
+			$th.css({
+				position:'fixed',
+				transition:'.5s cubic-bezier(.09,.34,.25,1) 0s'
 			});
+		}
+		function setSize(){
+			$('body').height($th.innerHeight());
 		};
-
-		if(!is_ie){
-			$t.css({ position:'fixed',transition:op.speed });
+		function setPos(){
+			$th.css({ transform:'translateY(-'+$(window).scrollTop()+'px)' });
 		};
-		$index_bar.find('span').css({ transition:op.speed });
-		$index.append($index_bar,$index_name).css({ transition:op.speed });
-		if($top_visual.length) $top_visual.css({ transition:op.speed });
-		$('body').append($index);
+		function setPosFirst(){
+			if($(hash).length>0)
+				$th.css({ transform:'translateY(-'+$(hash).offset().top+'px)' });
+			else
+				setPosition();
+		}
 
-		$scroll.each(function(i){
-			bool.scroll[i]=false;
-		});
-
-		$(document).on('DOMContentLoaded',function(){
-			sizeSet();
-		});
-
-		$(window).on({'load':function(){
-				sizeSet();
-				set();
-				if($(hash).length){
-					var top=$(hash).offset().top;
-					if(!is_ie){
-						$t.css({ transform:'translateY(-'+top+'px)' });
-					}else{
-						window.scrollTo(0,top);
-					};
-				};
-			},
-			'resize':function(){
-				sizeSet();
-			},
-			'scroll':function(){
-				sizeSet();
-				set();
-			}
-		});
 	}
 })(jQuery);

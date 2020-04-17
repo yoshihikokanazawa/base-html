@@ -91,9 +91,7 @@ z-index: 200;
    ========================================================================== */
 #pagetop {
 position: absolute;
-width: 100%;
 z-index: 300;
-padding: 0 10px 10px 0;
 }
 /* youtube
    ========================================================================== */
@@ -152,43 +150,4 @@ display: inline;
 }
 
 @media screen\0 {
-.ie11 {
-display: inline;
-}
-.ie11 img {
-}
-.ie11-other {
-display: none;
-}
-body .img-list section > div > p .wrap,
-.img-list section > a > p .wrap {
-margin:0;
-}
-body .business-top section ul li a img,
-.business-top section ul li p img {
-margin:0;
-}
-body #company-top-list .img-list section .list-txt .ie11 img {
-width:60px;
-vertical-align:-1px;
-opacity:0.7;
-}
-body #greeting .greeting-inner .signature li .name .ie11 img {
-opacity: 0.7;
-}
-body #company-overview .company-overview-detail ul li .txt .post1 {
-letter-spacing: 0.06em;
-}
-body #company-overview .company-overview-detail ul li .txt .ie11 img {
-width: 79px;
-opacity: 0.8;
-}
-body #company-officers .company-officers-detail ul li .txt .ie11 img {
-width: 79px;
-opacity: 0.8;
-vertical-align: -1px;
-}
-body #contact-top section ul li h3 {
-height:58px;
-}
 }

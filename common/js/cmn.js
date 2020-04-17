@@ -1,11 +1,11 @@
-jQuery(function($){
+(function($){
 	$(window).on('load',function(){
 		$('body').removeClass('loading');
 		setTimeout(function(){
 			$('body').addClass('loaded');
 		},0);
 	});
-});
+})(jQuery);
 
 
 
@@ -15,7 +15,7 @@ jQuery(function($){
 // SP : アコーディオンメニュー
 // PC : メガメニュー
 //
-jQuery(function($){
+(function($){
 	$(window).on('load',function(){
 		$('#gnav .gnav-nav > li').each(function(){
 			set($(this));
@@ -38,29 +38,4 @@ jQuery(function($){
 			});
 		}
 	}
-});
-
-/*////////////////////////////////////////////////////////////////////
-ニュースのタブメニュー切替
-////////////////////////////////////////////////////////////////////*/
-jQuery(function($){
-	if($('.news-list ul.nav').length>0){
-		$('.news-list ul.nav .tab_label').on('click',function(){
-			var $th = $(this).index();
-			$('.news-list ul.nav .tab_label').removeClass('active');
-			$('.news-list ul.list').removeClass('active');
-			$(this).addClass('active');
-			$('.news-list ul.list').eq($th).addClass('active');
-		});
-		// #xx-newsで初期タブ変更
-		hash=window.location.hash;
-		if(hash!=''){
-			if($('#news '+hash).length>0){
-				$('#news > ul').removeClass('active');
-				$('#news '+hash).addClass('active');
-				$('#news .nav li').removeClass('active');
-				$('#news .nav li'+hash.replace('#','.')).addClass('active');
-			}
-		}
-	}
-});
+})(jQuery);

@@ -1,5 +1,4 @@
 @charset "utf-8";
-
 body {
 transition: background 0.1s ease 1s;
 }
@@ -9,6 +8,33 @@ background: #fff;
 #container {
 }
 /*====================================================================
+#pagetop
+====================================================================*/
+#pagetop {
+width: 100%;
+}
+#pagetop p {
+position: absolute;
+}
+#pagetop p a {
+color: #fff;
+background: #005ead;
+display: flex;
+align-items: center;
+justify-content: center;
+border-radius: 50%;
+line-height: 1.3;
+}
+#pagetop.sticky {
+position: fixed;
+right: 0;
+bottom: 0;
+transition: opacity 0.3s ease;
+}
+#pagetop.sticky.hide {
+opacity: 0;
+}
+/*====================================================================
 footer
 ====================================================================*/
 footer {
@@ -16,15 +42,31 @@ background: #005ead;
 color: #fff;
 }
 footer p {
-display:flex;
-justify-content:center;
-align-items:center;
+display: flex;
+justify-content: center;
+align-items: center;
 }
 
 /*////////////////////////////////////////////////////////////////////
 スマホ版
 ////////////////////////////////////////////////////////////////////*/
 @media screen and (max-width: 750px) {
+/*====================================================================
+#pagetop
+====================================================================*/
+#pagetop {
+}
+#pagetop p {
+bottom: 16px;
+right: 16px;
+}
+#pagetop p a {
+width: 48px;
+height: 48px;
+font-size: 1.2rem;
+}
+#pagetop.sticky {
+}
 /*====================================================================
 footer
 ====================================================================*/
@@ -41,13 +83,28 @@ PC版
 ////////////////////////////////////////////////////////////////////*/
 @media screen and (min-width: 750px) {
 /*====================================================================
+#pagetop
+====================================================================*/
+#pagetop {
+}
+#pagetop p {
+bottom: 16px;
+right: 16px;
+}
+#pagetop p a {
+width: 64px;
+height: 64px;
+font-size: 1.4rem;
+}
+#pagetop.sticky {
+}
+/*====================================================================
 footer
 ====================================================================*/
 footer {
 }
 footer p {
 font-size: 1.4rem;
-height:100px;
+height: 300px;
 }
-
 }
