@@ -321,15 +321,20 @@ jQuery.extend(jQuery.easing,{easeIn:function(e,t,n,r,i){return jQuery.easing.eas
 
 
 // ------------------------------
-// SmoothScroll 3.0.2
+// SmoothScroll 3.0.3
 // ------------------------------
-// update 2020.4.16
+// update 2020.5.26
 //
 // ページ内遷移の場合、スムーズにスクロールさせる。
 //
 // @param {string} first, {string} duration, {string} easing,
 // @return {jQuery}
 // 
+// ◆以下の機能を追加 2020.5.26
+// ※機能強化の余地あり
+// $eq.SmoothScroll();
+// $.SmoothScroll('#hash');
+//
 (function($){
 	var id,
 		$body,
@@ -346,13 +351,35 @@ jQuery.extend(jQuery.easing,{easeIn:function(e,t,n,r,i){return jQuery.easing.eas
 	$.extend({
 		'SmoothScroll':SmoothScroll,
 	});
+	$.fn.extend({
+		'SmoothScroll':SmoothScrollElement,
+	});
+	
+	function SmoothScrollElement(){
+		intervalAnimate($(this),function(){
+			// コールバック
+		});
+	}
 
 	function SmoothScroll(prm){
-		params=$.extend(true,DEFAULTS,prm);
-		$body=$.getBody();
-		$.convertPathHash();
-		_set();
-		_first(params.first);
+		// jQueryオブジェクトの場合
+		if(prm instanceof jQuery){
+			intervalAnimate(prm,function(){
+				// コールバック
+			});
+		// ハッシュタグの場合
+		}else if(typeof prm == 'String'){
+			if(!(hash&&$(hash).offset()!==null))return;
+			intervalAnimate($(prm),function(){
+				// コールバック
+			});
+		}else{
+			params=$.extend(true,DEFAULTS,prm);
+			$body=$.getBody();
+			$.convertPathHash();
+			_set();
+			_first(params.first);
+		}
 		return {}
 	}
 	
@@ -398,10 +425,8 @@ jQuery.extend(jQuery.easing,{easeIn:function(e,t,n,r,i){return jQuery.easing.eas
 				$body.scrollTop($(hash).offsetZoomTop()-$.getHeight.header());
 				break;
 			case 'scroll':
-				//$body.animate({'scrollTop':$(hash).offsetZoomTop()-diff},params.duration,params.easing,function(){
-				intervalAnimate(hash,function(){
+				intervalAnimate($(hash),function(){
 					if(params.setHash&&params.setHashNot.indexOf(hash)==-1){
-						//location.hash = hash;
 						history.pushState(null,null,hash)
 					}
 				});
@@ -419,11 +444,11 @@ jQuery.extend(jQuery.easing,{easeIn:function(e,t,n,r,i){return jQuery.easing.eas
 	
 	// setIntervalを使ったanimate
 	// ※jQuery.animateと違うのは、動きながらも目的位置の情報を取得している。
-	function intervalAnimate(hash,callback){
+	function intervalAnimate($eq,callback){
 		clearInterval(id);
 		var nowY=$body.scrollTop();
 		id=setInterval(function(){
-			var movY=getMovY(hash);
+			var movY=getMovY($eq);
 			nowY+=(movY-nowY)*0.15;
 			if(Math.abs(nowY-movY)<0.1){
 				$body.scrollTop(movY);
@@ -434,8 +459,8 @@ jQuery.extend(jQuery.easing,{easeIn:function(e,t,n,r,i){return jQuery.easing.eas
 			}
 		},15);
 	}
-	function getMovY(hash){
-		var movY=$(hash).offsetZoomTop()-$.getHeight.header();
+	function getMovY($eq){
+		var movY=$eq.offsetZoomTop()-$.getHeight.header();
 		// フッター近くの場合、位置を変更
 		var minY=$.getHeight.body()-$.getHeight.window();
 		if(movY>minY)movY=minY;
